@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createTicket, listTickets } from "./api";
+import { createTicket, listTickets, sortTicket } from "./api";
 import "./styles.css";
 
 export default function App() {
@@ -10,6 +10,17 @@ export default function App() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // QueueStorm /sort-ticket state.
+  const [sortTicketId, setSortTicketId] = useState("T-001");
+  const [sortChannel, setSortChannel] = useState("app");
+  const [sortLocale, setSortLocale] = useState("en");
+  const [sortMessage, setSortMessage] = useState(
+    "I sent 5000 taka to a wrong number this morning, please help me get it back"
+  );
+  const [sortResult, setSortResult] = useState(null);
+  const [sortLoading, setSortLoading] = useState(false);
+  const [sortError, setSortError] = useState("");
 
   async function refresh() {
     try {
@@ -60,6 +71,25 @@ export default function App() {
   const neutrals = tickets.filter(
     (t) => t.sentiment?.toLowerCase() === "neutral"
   ).length;
+
+  async function handleSort(e) {
+    e.preventDefault();
+    setSortLoading(true);
+    setSortError("");
+    try {
+      const data = await sortTicket({
+        ticket_id: sortTicketId,
+        channel: sortChannel || undefined,
+        locale: sortLocale || undefined,
+        message: sortMessage,
+      });
+      setSortResult(data);
+    } catch {
+      setSortError("Could not sort ticket");
+    } finally {
+      setSortLoading(false);
+    }
+  }
 
   return (
     <div className="container">
@@ -179,6 +209,112 @@ export default function App() {
             })}
           </div>
         </div>
+      </div>
+
+      <div className="sort-section">
+        <h2>🛡️ Sort Ticket (QueueStorm)</h2>
+        <p className="sort-subtitle">
+          Submit one customer message. The backend classifies it into a
+          case type, severity, and routing department.
+        </p>
+
+        <form className="sort-grid" onSubmit={handleSort}>
+          <div className="form-group">
+            <label>Ticket ID</label>
+            <input
+              value={sortTicketId}
+              onChange={(e) => setSortTicketId(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Channel</label>
+            <select
+              value={sortChannel}
+              onChange={(e) => setSortChannel(e.target.value)}
+            >
+              <option value="app">app</option>
+              <option value="sms">sms</option>
+              <option value="call_center">call_center</option>
+              <option value="merchant_portal">merchant_portal</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Locale</label>
+            <select
+              value={sortLocale}
+              onChange={(e) => setSortLocale(e.target.value)}
+            >
+              <option value="en">en</option>
+              <option value="bn">bn</option>
+              <option value="mixed">mixed</option>
+            </select>
+          </div>
+
+          <div className="form-group sort-message">
+            <label>Customer message</label>
+            <textarea
+              rows={4}
+              value={sortMessage}
+              onChange={(e) => setSortMessage(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="sort-submit">
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={sortLoading}
+            >
+              {sortLoading ? "Sorting..." : "Sort Ticket"}
+            </button>
+            {sortError && <div className="error">{sortError}</div>}
+          </div>
+        </form>
+
+        {sortResult && (
+          <div
+            className={`sort-result ${
+              sortResult.human_review_required ? "review" : ""
+            }`}
+          >
+            <div className="sort-row">
+              <span className="sort-label">Case type</span>
+              <span className="sort-value">{sortResult.case_type}</span>
+            </div>
+            <div className="sort-row">
+              <span className="sort-label">Severity</span>
+              <span
+                className={`sort-value severity-${sortResult.severity}`}
+              >
+                {sortResult.severity}
+              </span>
+            </div>
+            <div className="sort-row">
+              <span className="sort-label">Department</span>
+              <span className="sort-value">{sortResult.department}</span>
+            </div>
+            <div className="sort-row">
+              <span className="sort-label">Confidence</span>
+              <span className="sort-value">
+                {(sortResult.confidence * 100).toFixed(0)}%
+              </span>
+            </div>
+            <div className="sort-row">
+              <span className="sort-label">Human review</span>
+              <span className="sort-value">
+                {sortResult.human_review_required ? "Required" : "Not required"}
+              </span>
+            </div>
+            <div className="sort-summary">
+              <span className="sort-label">Agent summary</span>
+              <p>{sortResult.agent_summary}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

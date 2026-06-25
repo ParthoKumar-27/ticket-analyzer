@@ -4,6 +4,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
+from app.classifier import classify_ticket
 from app.database import Base, engine, get_db
 from app import models, schemas
 from app.sentiment import load_model, analyze
@@ -50,3 +51,21 @@ def create_ticket(ticket: schemas.TicketCreate, db: Session = Depends(get_db)):
 @app.get("/tickets", response_model=List[schemas.TicketOut])
 def list_tickets(db: Session = Depends(get_db)):
     return db.query(models.Ticket).order_by(models.Ticket.created_at.desc()).all()
+
+
+# --- QueueStorm /sort-ticket ---------------------------------------------
+# Rule-based classifier. No LLM, no GPU, no external network. Spec allows
+# rules-based solutions. human_review_required is true for critical severity
+# or phishing cases (spec §3 + §4).
+@app.post("/sort-ticket", response_model=schemas.SortTicketResponse)
+def sort_ticket(payload: schemas.SortTicketRequest):
+    result = classify_ticket(payload.message)
+    return schemas.SortTicketResponse(
+        ticket_id=payload.ticket_id,
+        case_type=result.case_type,
+        severity=result.severity,
+        department=result.department,
+        agent_summary=result.agent_summary,
+        human_review_required=result.human_review_required,
+        confidence=result.confidence,
+    )

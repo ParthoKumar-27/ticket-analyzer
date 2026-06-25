@@ -223,3 +223,121 @@ textarea:focus {
   color: var(--danger);
   margin-top: 10px;
 }
+
+/* --- QueueStorm /sort-ticket section ---------------------------------- */
+
+.sort-section {
+  margin-top: 30px;
+  background: var(--card);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.sort-section h2 {
+  margin-bottom: 6px;
+}
+
+.sort-subtitle {
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.sort-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .sort-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sort-message {
+  grid-column: 1 / -1;
+}
+
+.sort-submit {
+  grid-column: 1 / -1;
+}
+
+.sort-result {
+  margin-top: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 18px;
+  background: #f8fafc;
+}
+
+.sort-result.review {
+  border-color: var(--danger);
+  background: #fef2f2;
+}
+
+.sort-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.sort-row:last-of-type {
+  border-bottom: none;
+}
+
+.sort-label {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sort-value {
+  font-weight: 600;
+}
+
+.severity-low {
+  color: #047857;
+}
+
+.severity-medium {
+  color: #b45309;
+}
+
+.severity-high {
+  color: #b91c1c;
+}
+
+.severity-critical {
+  color: #7f1d1d;
+}
+
+.sort-summary {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.sort-summary p {
+  margin-top: 6px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+select {
+  width: 100%;
+  border: 1px solid #dbe4f0;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 15px;
+  background: white;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+}

@@ -21,3 +21,15 @@ export async function listTickets() {
   const res = await fetch(`${API_BASE_URL}/tickets`)
   return res.json()
 }
+
+// QueueStorm /sort-ticket helper. Sends a single CRM ticket to the
+// rule-based classifier and returns the structured response.
+export async function sortTicket(payload) {
+  const res = await fetch(`${API_BASE_URL}/sort-ticket`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error('Failed to sort ticket')
+  return res.json()
+}

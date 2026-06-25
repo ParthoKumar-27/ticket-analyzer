@@ -8,9 +8,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt .
 
-# CPU-only torch — keeps the final image around 600-800MB instead of 2+GB
-RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch==2.4.1
-RUN pip install --no-cache-dir -r requirements.txt
+# CPU-only torch — keeps the final image around 600-800MB instead of 2+GB.
+# Use a very generous pip timeout because the 195 MB wheel can stall on
+# slow links and trip the default 15s socket read timeout.
+ENV PIP_DEFAULT_TIMEOUT=600
+RUN pip install --no-cache-dir --timeout 600 --retries 5 \
+    --index-url https://download.pytorch.org/whl/cpu torch==2.4.1
+RUN pip install --no-cache-dir --timeout 600 --retries 5 -r requirements.txt
 
 ENV HF_HOME=/opt/hf-cache
 ENV MODEL_NAME=distilbert-base-uncased-finetuned-sst-2-english
