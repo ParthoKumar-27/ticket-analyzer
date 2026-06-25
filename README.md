@@ -180,3 +180,16 @@ platform's secret manager).
 - **`/sort-ticket` returns unexpected case_type** — the classifier is
   keyword-driven; inspect `backend/app/classifier.py` (pattern lists and
   the disambiguation rules) and adjust before changing the API surface.
+
+## Contributors
+### Team Name: **DU_CyberCentinels**
+
+### University: **University of Dhaka**
+
+### Team Members
+
+1. **Md. Samiul Islam Siam**  
+
+2. **Partho Kumar Mondal**  
+
+3. **Faiaz Ibne Iqbal**  
