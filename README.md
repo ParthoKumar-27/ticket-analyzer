@@ -140,7 +140,7 @@ this repository.
 - GitHub: https://github.com/ParthoKumar-27/ticket-analyzer
 - DockerHub backend: https://hub.docker.com/r/parthokumar/ticket-analyzer-backend
 - DockerHub frontend: https://hub.docker.com/r/parthokumar/ticket-analyzer-frontend
-- Live URL: http://<vm-public-ip>:3000
+- Live URL: https://6a32b9355dde7994028daae3_a23f9086.lb.poridhi.io/
 
 ### Deployment Runbook (for graders)
 If a fresh redeploy is needed on any Docker host (Render / Railway / Fly /
